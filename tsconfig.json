@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "target": "ES2020",
     "noImplicitAny": true,
     "sourceMap": true,
@@ -12,7 +12,8 @@
     "baseUrl": "./src",
     "typeRoots": ["./types"],
     "allowSyntheticDefaultImports": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "esModuleInterop": true
   },
   "include": ["src/**/*.ts"]
 }
