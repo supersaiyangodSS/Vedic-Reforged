@@ -1,5 +1,7 @@
-import express from 'express';
+import express , { Request, Response } from 'express';
+import connectDB from './config/database.js';
 
 const app = express();
+connectDB();
 
 export default app;
