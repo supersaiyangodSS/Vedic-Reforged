@@ -14,6 +14,9 @@ dependencies:
   '@types/node':
     specifier: ^20.11.5
     version: 20.11.5
+  connect-mongo:
+    specifier: ^5.1.0
+    version: 5.1.0(express-session@1.18.0)(mongodb@6.3.0)
   express:
     specifier: ^4.18.2
     version: 4.18.2
@@ -338,6 +341,15 @@ packages:
     resolution: {integrity: sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==}
     dev: false
 
+  /asn1.js@5.4.1:
+    resolution: {integrity: sha512-+I//4cYPccV8LdmBLiX8CYvf9Sp3vQsrqu2QNXRcrbiWvcx/UdlFiqUJJzxRQxgsZmvhXhn4cSKeSmoFjVdupA==}
+    dependencies:
+      bn.js: 4.12.0
+      inherits: 2.0.4
+      minimalistic-assert: 1.0.1
+      safer-buffer: 2.1.2
+    dev: false
+
   /balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: true
@@ -358,6 +370,10 @@ packages:
       - encoding
       - supports-color
     dev: true
+
+  /bn.js@4.12.0:
+    resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
+    dev: false
 
   /body-parser@1.20.1:
     resolution: {integrity: sha512-jWi7abTbYwajOytWCQc37VulmWiRae5RyTpaCyDcS5/lMdtwSz5lOpDE67srw/HYe35f1z3fDQw+3txg7gNtWw==}
@@ -472,6 +488,21 @@ packages:
       readable-stream: 2.3.8
       typedarray: 0.0.6
     dev: true
+
+  /connect-mongo@5.1.0(express-session@1.18.0)(mongodb@6.3.0):
+    resolution: {integrity: sha512-xT0vxQLqyqoUTxPLzlP9a/u+vir0zNkhiy9uAdHjSCcUUf7TS5b55Icw8lVyYFxfemP3Mf9gdwUOgeF3cxCAhw==}
+    engines: {node: '>=12.9.0'}
+    peerDependencies:
+      express-session: ^1.17.1
+      mongodb: '>= 5.1.0 < 7'
+    dependencies:
+      debug: 4.3.4
+      express-session: 1.18.0
+      kruptein: 3.0.6
+      mongodb: 6.3.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /console-control-strings@1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
@@ -946,6 +977,13 @@ packages:
       json-buffer: 3.0.1
     dev: false
 
+  /kruptein@3.0.6:
+    resolution: {integrity: sha512-EQJjTwAJfQkC4NfdQdo3HXM2a9pmBm8oidzH270cYu1MbgXPNPMJuldN7OPX+qdhPO5rw4X3/iKz0BFBfkXGKA==}
+    engines: {node: '>8'}
+    dependencies:
+      asn1.js: 5.4.1
+    dev: false
+
   /lowercase-keys@2.0.0:
     resolution: {integrity: sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==}
     engines: {node: '>=8'}
@@ -1008,6 +1046,10 @@ packages:
   /mimic-response@3.1.0:
     resolution: {integrity: sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==}
     engines: {node: '>=10'}
+    dev: false
+
+  /minimalistic-assert@1.0.1:
+    resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
     dev: false
 
   /minimatch@3.1.2:
