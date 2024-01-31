@@ -9,6 +9,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import Sahity from './models/sahity.js';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import crypto from 'crypto';
 connectDB();
 
 const app : Express = express();
@@ -17,34 +19,37 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+const oneDay = 24 * 60 * 60 * 1000;
+const sessionSecret = crypto.randomBytes(64).toString('hex');
 
 const sessions = session({
-    secret: 'jfelijkjfks', //TODO:
+    secret: process.env.SECRET || sessionSecret,
     resave: false,
+    cookie: {
+        path: '/',
+        httpOnly: false,
+        maxAge: oneDay,
+    },
+    store: MongoStore.create({ mongoUrl: process.env.DB }),
     saveUninitialized: true,
 })
 
 app.use(express.static('public'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(sessions);
 
 
-const uploadPage = join(__dirname, '../public/upload.html');
 
 function isAuth (req: Request, res: Response, next: NextFunction) {
     if (req.session && req.session.user) {
-        console.log('logged in');        
         next();
+    } else {
+        return res.redirect('/auth')
     }
-    console.log('logged out');
-    return res.redirect('/login')
 }
 
-app.get('/', isAuth, (req: Request, res: Response) => {
-    res.sendFile(uploadPage);
-})
-
-app.post('/upload', upload.single('jsonFile'), async (req: Request, res: Response) => {
+app.post('/upload', isAuth, upload.single('jsonFile'), async (req: Request, res: Response) => {
     try {
         if (!req.file) {
             return res.json({ error: 'No file uploaded!' });
@@ -58,16 +63,8 @@ app.post('/upload', upload.single('jsonFile'), async (req: Request, res: Respons
     }
 })
 
-app.get('/login', async (req: Request, res: Response) => {
-    try {
-        res.send('login')
-    } catch (error) {
-        res.send(error);
-        console.log(error);    
-    }
-})
-
 app.use('/api', main)
 app.use('/auth', auth)
 
 export default app;
+ 
