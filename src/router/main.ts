@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { getStotras } from "../controller/stotramController.js"
+import { getSahity } from "../controller/sahityController.js"
 
 const router : Router = Router();
 
-router.get('/stotram', getStotras);
+router.get('/sahity', getSahity);
 
 export default router;
