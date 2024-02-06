@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 config();
 import express , { Request, Response, Express, NextFunction } from 'express';
 import connectDB from './config/database.js';
+import cors from 'cors';
 import main from './router/main.js';
 import auth from './router/auth.js';
 import uploader from './router/upload.js';
@@ -26,7 +27,7 @@ const sessions = session({
     store: MongoStore.create({ mongoUrl: process.env.DB }),
     saveUninitialized: true,
 })
-
+app.use(cors())
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
