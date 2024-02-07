@@ -1,7 +1,28 @@
 import { Request, Response } from "express";
 import Admin from "../models/admin.js";
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 
+const createAdmin = async (req: Request, res: Response) => {
+    try {
+        const { fullName, email, username, password } = req.body;
+        if (!fullName || !email || !username || !password) {
+            return res.json({ error:  'all fields are required!'})
+        }
+        const hashedPassword = await hash(password, 10);
+        const newAdmin = new Admin({
+            fullName,
+            username,
+            email,
+            password: hashedPassword
+        });
+        if (newAdmin) {
+            await newAdmin.save();
+        }
+        return res.send('user created');
+    } catch (error) {
+        console.log(error);        
+    }
+}
 
 const login = async (req: Request, res: Response) => {
     try {
@@ -35,4 +56,4 @@ const logout = async (req: Request, res: Response) => {
     res.redirect('/auth');
 }
 
-export { login, logout };
+export { login, logout, createAdmin };
