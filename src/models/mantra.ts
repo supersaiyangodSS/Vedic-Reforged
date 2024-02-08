@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { IMantra } from '../interfaces/mantraInterface.js';
 
-const stotramSchema = new Schema<IMantra>({
+const MantraSchema = new Schema<IMantra>({
     title: {
         type: String,
         required: true,
@@ -24,6 +24,6 @@ const stotramSchema = new Schema<IMantra>({
     }
 });
 
-const Stotram = model<IMantra>('Stotram', stotramSchema);
+const Mantra = model<IMantra>('Mantra', MantraSchema);
 
-export default Stotram;
+export default Mantra;
