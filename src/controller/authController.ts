@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import Admin from "../models/admin.js";
 import { compare, hash } from 'bcrypt';
+import { errorLogger } from "../helpers/logger.js";
 
 const createAdmin = async (req: Request, res: Response) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     try {
         const { fullName, email, username, password } = req.body;
         if (!fullName || !email || !username || !password) {
-            return res.json({ error:  'all fields are required!'})
+            return res.json({ error:  'all fields are required!'});
         }
         const hashedPassword = await hash(password, 10);
         const newAdmin = new Admin({
@@ -20,7 +22,14 @@ const createAdmin = async (req: Request, res: Response) => {
         }
         return res.send('user created');
     } catch (error) {
-        console.log(error);        
+        console.log(error);
+        errorLogger.error('API call error', {
+            endpoint: `/auth/admin`,
+            method: 'POST',
+            ip: ip,
+            error: error
+        })
+        return res.status(500).json('internal server error!');
     }
 }
 

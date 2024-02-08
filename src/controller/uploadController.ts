@@ -13,7 +13,6 @@ const uploadSahitya = async (req: Request, res: Response) => {
                 error: 'no file uploaded!'
             })
             return res.json({ error: 'No file uploaded!' });
-            
         }
         const jsonData = JSON.parse(req.file.buffer.toString());
         await Sahity.create(jsonData);
