@@ -1,12 +1,12 @@
 import { config } from 'dotenv';
 config();
-import express , { Request, Response, Express, NextFunction } from 'express';
+import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import crypto from 'crypto';
 
-const app : Express = express();
+const app = express();
 
 const oneDay = 24 * 60 * 60 * 1000;
 const sessionSecret = crypto.randomBytes(64).toString('hex');
@@ -28,5 +28,5 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(sessions);
 
-export {app} ;
+export {app};
  
