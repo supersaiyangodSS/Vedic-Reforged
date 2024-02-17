@@ -5,14 +5,15 @@
     "target": "ES2020",
     "noImplicitAny": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "allowJs": true,
     "baseUrl": "./src",
     "typeRoots": ["./types"],
     "allowSyntheticDefaultImports": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "esModuleInterop": true
   },
   "include": ["src/**/*.ts"],
 }
