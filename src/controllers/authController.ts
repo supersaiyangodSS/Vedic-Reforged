@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/User.js";
 import { ValidationError } from 'express-validator';
+import { compare } from 'bcrypt';
 
 const registerUser =  async (req: Request, res: Response) => {
     const { firstName, lastName, email, username, password } = req.body;
@@ -25,4 +26,24 @@ const registerUser =  async (req: Request, res: Response) => {
     }
 }
 
-export { registerUser }
+const loginUser = async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    try {
+        const findUser = await User.findOne({
+            username: username
+        })
+        if (!findUser) {
+            return res.status(404).send('Invalid username or password');
+        }
+        const matchPassword = await compare(password, findUser.password);
+        if (!matchPassword) {
+            return res.status(404).send('Invalid username or password');
+        }
+        // setup session variable
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error!");
+    }
+}
+
+export { registerUser, loginUser }
