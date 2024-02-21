@@ -30,6 +30,15 @@ const userSchema = new Schema<IUser>({
         enum: ['admin', 'user'],
         default: "admin",
     },
+    token: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    isTokenUsed: {
+        type: Boolean,
+        default: false,
+    },
     created_at: {
         type: Date,
         default: Date.now,
