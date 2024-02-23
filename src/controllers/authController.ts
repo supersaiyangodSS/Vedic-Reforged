@@ -39,7 +39,9 @@ const loginUser = async (req: Request, res: Response) => {
         if (!matchPassword) {
             return res.status(404).send('Invalid username or password');
         }
-        // setup session variable
+        req.session.user = findUser.username;
+        req.session.role = findUser.role;
+        req.session.uid = findUser._id;
     } catch (error) {
         console.log(error);
         res.status(500).send("Internal Server Error!");
