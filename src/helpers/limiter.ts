@@ -7,7 +7,7 @@ export const limiter = rateLimit({
     max: 80,
     message: 'Too many request, try again later',
     keyGenerator : (req : Request) => {
-        return requestIp.getClientIp(req) || 'unknown'
+        return requestIp.getClientIp(req) || 'unknown' 
     }
 })
 
