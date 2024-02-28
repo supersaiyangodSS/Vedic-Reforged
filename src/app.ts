@@ -1,16 +1,24 @@
+import { config } from 'dotenv';
+config();
 import express, { Request, Response, Express } from 'express';
 import connectDB from './config/database.js';
 import Auth_Router from './routes/auth.js';
-import session from 'express-session';
+import sessions from 'express-session';
 import cors from 'cors';
 import MongoStore from 'connect-mongo';
 connectDB();
 
-const app : Express = express ();
+const app: Express = express ();
 
-const oneDay = 24 * 60 * 60 * 1000;
+const oneDay: number = 24 * 60 * 60 * 1000;
+const sessionSecret: string | undefined = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+    console.log('SESSION_SECRET environment variable is not defined.');
+    process.exit(1);
+}
+
 const options = {
-    secret: 'test', //TODO:
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -22,7 +30,7 @@ const options = {
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(session(options));
+app.use(sessions(options));
 app.use(cors());
 app.use(express.static('public'));
 
