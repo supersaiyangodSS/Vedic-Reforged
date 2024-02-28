@@ -1,10 +1,18 @@
+import "express-session";
 import { Request, Response } from "express";
 import User from "../models/User.js";
-import { ValidationError } from 'express-validator';
+import { validationResult } from 'express-validator';
 import { compare } from 'bcrypt';
 
 const registerUser =  async (req: Request, res: Response) => {
-    const { firstName, lastName, email, username, password } = req.body;
+    const { firstName, lastName, email, username, password, address } = req.body;
+    if (address) {
+        return res.status(403).send('Access denied: Bot detection triggered.');
+    }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     try {
         const newUser = new User({
             firstName,
@@ -27,7 +35,10 @@ const registerUser =  async (req: Request, res: Response) => {
 }
 
 const loginUser = async (req: Request, res: Response) => {
-    const { username, password } = req.body;
+    const { username, password, address } = req.body;
+    if (address) {
+        return res.status(403).send('Access denied: Bot detection triggered.');
+    }
     try {
         const findUser = await User.findOne({
             username: username
