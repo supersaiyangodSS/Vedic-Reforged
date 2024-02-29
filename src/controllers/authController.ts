@@ -4,7 +4,16 @@ import User from "../models/User.js";
 import { validationResult } from 'express-validator';
 import { compare } from 'bcrypt';
 
-const registerUser =  async (req: Request, res: Response) => {
+interface IRequest {
+    firstName: string,
+    lastName: string,
+    email: string,
+    username: string,
+    password: string,
+    address: string,
+}
+
+const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response) => {
     const { firstName, lastName, email, username, password, address } = req.body;
     if (address) {
         return res.status(403).send('Access denied: Bot detection triggered.');
@@ -34,7 +43,7 @@ const registerUser =  async (req: Request, res: Response) => {
     }
 }
 
-const loginUser = async (req: Request, res: Response) => {
+const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
     const { username, password, address } = req.body;
     if (address) {
         return res.status(403).send('Access denied: Bot detection triggered.');
