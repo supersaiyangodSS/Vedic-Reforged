@@ -13,6 +13,8 @@ interface IRequest {
     address: string,
 }
 
+enum Role { ADMIN, USER }
+
 const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response) => {
     const { firstName, lastName, email, username, password, address } = req.body;
     if (address) {
