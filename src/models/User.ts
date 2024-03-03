@@ -39,11 +39,11 @@ const userSchema = new Schema<IUser>({
         type: Boolean,
         default: false,
     },
-    created_at: {
+    createdOn: {
         type: Date,
         default: Date.now,
     },
-    updated_at: {
+    updatedOn: {
         type: Date,
         default: Date.now,
     }
