@@ -9,6 +9,6 @@ export interface IUser extends Document {
     role: string,
     token: string,
     isTokenUsed: boolean,
-    created_at: Date,
-    updated_at: Date
+    createdOn: Date,
+    updatedOn: Date
 }
