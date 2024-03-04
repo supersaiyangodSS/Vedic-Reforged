@@ -13,7 +13,8 @@
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "allowSyntheticDefaultImports": true,
     "useUnknownInCatchVariables": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "removeComments": false    
   },
   "include": ["src/**/*.ts"],
 }
