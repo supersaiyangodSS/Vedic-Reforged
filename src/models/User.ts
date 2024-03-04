@@ -30,6 +30,10 @@ const userSchema = new Schema<IUser>({
         enum: ['ADMIN', 'USER'],
         default: "USER",
     },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
     token: {
         type: String,
         required: true,
