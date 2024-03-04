@@ -1,11 +1,12 @@
 import { config } from 'dotenv';
 config();
-import express, { Request, Response, Express } from 'express';
+import express, { Request, Response, Express, NextFunction } from 'express';
 import connectDB from './config/database.js';
 import Auth_Router from './routes/auth.js';
 import sessions from 'express-session';
 import cors from 'cors';
 import MongoStore from 'connect-mongo';
+import errorHandler from './middleware/errorHandler.js';
 connectDB();
 
 const app: Express = express ();
@@ -33,7 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(sessions(options));
 app.use(cors());
 app.use(express.static('public'));
-
+app.use(errorHandler);
 app.get('/', (req: Request, res: Response) => {
     res.status(200).json({ test: "node" });
 });
