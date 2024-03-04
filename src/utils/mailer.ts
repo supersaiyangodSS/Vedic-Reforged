@@ -23,7 +23,7 @@ else {
             return;
         }
         const mailOptions = {
-            from: process.env.MY_EMAIL, //SET,
+            from: process.env.MY_EMAIL,
             to: email,
             subject,
             html: mailBody
