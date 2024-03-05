@@ -2,8 +2,8 @@ import "express-session";
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User.js";
 import { validationResult } from 'express-validator';
-import { compare } from 'bcrypt';
-import { CustomrError } from "../errors/customError.js";
+import { compare, hash } from 'bcrypt';
+import { CustomError } from "../errors/customError.js";
 
 interface IRequest {
     firstName: string,
@@ -26,14 +26,24 @@ const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response, next
         return res.status(400).json({ errors: errors.array() });
     }
     try {
+        const emailCheck = await User.findOne({email});
+        if (emailCheck) {
+            return res.status(409).send('Email already exists');
+        }
+        const usernameCheck = await User.findOne({username});
+        if (usernameCheck) {
+            return res.status(409).send('Username already exists');
+        }
+        const hashedPassword = await hash(password, 12);
         const newUser = new User({
             firstName,
             lastName,
             username,
             email,
-            password
+            password: hashedPassword
         });
         try {
+            
             await newUser.save();
             return res.status(200).send(`new user created successfully: ${newUser.firstName}`)
         } catch (error) {
@@ -48,6 +58,7 @@ const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response, next
 
 const loginUser = async (req: Request<{}, {}, IRequest>, res: Response, next: NextFunction) => {
     const { username, password, address } = req.body;
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const errorOne = errors.array()[0].msg;
@@ -68,14 +79,14 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response, next: Ne
         }
         if (findUser.verified === false) {
             res.status(301).redirect('/verify');
-            throw new CustomrError('Custom Error Message', 301);
+            throw new CustomError('Custom Error Message', 301);
         }
         req.session.user = findUser.username;
         req.session.role = findUser.role;
         req.session.uid = findUser._id;
         return res.status(200).redirect('/dashboard');
     } catch (error) {
-        console.log(error);
+        console.error(error);
         next(error);
     }
 }
