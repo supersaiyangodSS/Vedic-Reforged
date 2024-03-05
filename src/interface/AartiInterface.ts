@@ -8,9 +8,9 @@ export interface IAarti extends Document {
         male: string,
         female: string,
     }
-    naivedhyaDharak : string,
-    naivedhyaDharakMobileNumber: number,
-    naivedhyaDharakAlternateMobileNumber: number,
+    naivedyaDharak : string,
+    naivedyaDharakMobileNumber: number,
+    naivedyaDharakAlternateMobileNumber: number,
     count: {
         male: number,
         female: number,

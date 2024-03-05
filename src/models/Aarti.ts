@@ -28,15 +28,15 @@ const AartiSchema = new Schema<IAarti>({
             }
         }
     },
-    naivedhyaDharak: {
+    naivedyaDharak: {
         type: String,
         required: true
     },
-    naivedhyaDharakMobileNumber: {
+    naivedyaDharakMobileNumber: {
         type: Number,
         required: true
     },
-    naivedhyaDharakAlternateMobileNumber: {
+    naivedyaDharakAlternateMobileNumber: {
         type: Number,
     },
     count: {
