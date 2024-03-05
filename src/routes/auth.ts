@@ -18,11 +18,11 @@ const loginValidator = [
 ]
 
 router.get('/', (req: Request, res: Response) => {
-    return res.json({ text: 'test' });
+    return res.status(301).redirect('/login');
 });
 
 router.post('/login', loginValidator, loginUser);
 
-router.post('/user', registerValidator, registerUser);
+router.post('/register', registerValidator, registerUser);
 
 export default router;
