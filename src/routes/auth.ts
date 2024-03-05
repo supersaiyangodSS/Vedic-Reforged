@@ -12,11 +12,16 @@ const registerValidator = [
     body('password').notEmpty().isLength({ min: 6 })
 ]
 
+const loginValidator = [
+    body('username').notEmpty().isString(),
+    body('password').notEmpty().isLength({ min: 6 })
+]
+
 router.get('/', (req: Request, res: Response) => {
     return res.json({ text: 'test' });
 });
 
-router.post('/login', loginUser);
+router.post('/login', loginValidator, loginUser);
 
 router.post('/user', registerValidator, registerUser);
 
