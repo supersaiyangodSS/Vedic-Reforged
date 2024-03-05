@@ -1,4 +1,4 @@
-import { registerUser } from '../controllers/authController.js';
+import { loginUser, registerUser } from '../controllers/authController.js';
 import { Router , Request, Response } from 'express';
 import { body } from 'express-validator';
 
@@ -15,6 +15,8 @@ const registerValidator = [
 router.get('/', (req: Request, res: Response) => {
     return res.json({ text: 'test' });
 });
+
+router.post('/login', loginUser);
 
 router.post('/user', registerValidator, registerUser);
 
