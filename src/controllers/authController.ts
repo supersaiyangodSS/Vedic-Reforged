@@ -1,9 +1,10 @@
 import "express-session";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import User from "../models/User.js";
 import { validationResult } from 'express-validator';
 import { compare, hash } from 'bcrypt';
-import { CustomError } from "../errors/customError.js";
+import sendEmail from "../utils/mailer.js";
+import { randomBytes } from 'crypto';
 
 interface IRequest {
     firstName: string,
@@ -14,16 +15,22 @@ interface IRequest {
     address: string,
 }
 
+const generateToken = () => {
+    return randomBytes(24).toString('hex');
+}
+
 enum Role { ADMIN, USER }
 
-const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response, next: NextFunction) => {
+const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response) => {
     const { firstName, lastName, email, username, password, address } = req.body;
+    
     if (address) {
         return res.status(403).send('Access denied: Bot detection triggered.');
     }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        const errorOne = errors.array()[0].msg;
+        return res.status(409).send(errorOne);
     }
     try {
         const emailCheck = await User.findOne({email});
@@ -34,36 +41,42 @@ const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response, next
         if (usernameCheck) {
             return res.status(409).send('Username already exists');
         }
+        const token = generateToken();
         const hashedPassword = await hash(password, 12);
         const newUser = new User({
             firstName,
             lastName,
             username,
             email,
+            token,
             password: hashedPassword
         });
-        try {
-            
+        console.log(newUser.email); // ! remove        
+        const emailBody = `
+            <a href="http://192.168.1.202:4000/auth/verify?token=${token}">Verify</a>
+        `
+        sendEmail(email, 'Verify Your Account | Shri Swami Samarth', emailBody);
+        try {            
             await newUser.save();
-            return res.status(200).send(`new user created successfully: ${newUser.firstName}`)
+            return res.status(200).send(`new user created successfully: ${newUser.firstName}`);
         } catch (error) {
             console.log(error);
             return res.status(500).send("Internal Server Error: Unable to create user");
         }
     } catch (error) {
         console.log(error);
-        next(error);
+        return res.status(500).send('Internal Server Error');
     }
 }
 
-const loginUser = async (req: Request<{}, {}, IRequest>, res: Response, next: NextFunction) => {
+const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
     const { username, password, address } = req.body;
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const errorOne = errors.array()[0].msg;
-
-        return res.status(301).redirect('/auth');
+        // const errorOne = errors.array();
+        return res.status(409).send(errorOne);
     }
     if (address) {
         return res.status(403).send('Access denied: Bot detection triggered.');
@@ -79,7 +92,6 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response, next: Ne
         }
         if (findUser.verified === false) {
             res.status(301).redirect('/verify');
-            throw new CustomError('Custom Error Message', 301);
         }
         req.session.user = findUser.username;
         req.session.role = findUser.role;
@@ -87,8 +99,32 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response, next: Ne
         return res.status(200).redirect('/dashboard');
     } catch (error) {
         console.error(error);
-        next(error);
+        return res.status(500).send('Internal Server Error');
     }
 }
 
-export { registerUser, loginUser }
+const verifyUser = async (req: Request, res: Response) => {
+    const { token } = req.query;
+    try {
+        if (!token) {
+            return res.status(400).send('Invalid or Expired Token');
+        }
+        const user = await User.findOne({
+            token,
+            isTokenUsed: false,
+        });
+        if (!user) {
+            return res.status(404).send('User not found. The provided Token may be invalid or expired.')
+        }
+        user.verified = true;
+        user.isTokenUsed = true;
+        user.token = generateToken();
+        await user.save();
+        return res.status(200).send('Email Verified Successfully');
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send('Internal Server Error');
+    }
+}
+
+export { registerUser, loginUser, verifyUser }
