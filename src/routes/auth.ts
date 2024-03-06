@@ -1,5 +1,5 @@
-import { loginUser, registerUser } from '../controllers/authController.js';
-import { Router , Request, Response } from 'express';
+import { loginUser, registerUser, verifyUser } from '../controllers/authController.js';
+import { Router } from 'express';
 import { body } from 'express-validator';
 
 const router : Router = Router();
@@ -17,12 +17,14 @@ const loginValidator = [
     body('password').notEmpty().isLength({ min: 6 })
 ]
 
-router.get('/', (req: Request, res: Response) => {
-    return res.status(301).redirect('/login');
-});
+const otpValidator = [
+    body('otp').notEmpty().isLength({ min: 6 })
+]
 
 router.post('/login', loginValidator, loginUser);
 
 router.post('/register', registerValidator, registerUser);
+
+router.get('/verify', otpValidator, verifyUser);
 
 export default router;
