@@ -1,10 +1,8 @@
-import { useState } from 'react'
-import './App.css'
-import LoginForm from './components/login'
+import RegisterForm from './components/login'
 
 function App() {
   return (
-    <LoginForm />
+    <RegisterForm />
   )
 }
 
