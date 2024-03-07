@@ -50,15 +50,15 @@ const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response) => {
             email,
             token,
             password: hashedPassword
-        });
-        console.log(newUser.email); // ! remove        
+        });      
         const emailBody = `
+            <p>Please verify your email address. If you haven't signed up for this service, you can safely ignore this email.</p>
             <a href="http://192.168.1.202:4000/auth/verify?token=${token}">Verify</a>
         `
-        sendEmail(email, 'Verify Your Account | Shri Swami Samarth', emailBody);
+        sendEmail(email, 'Verify Your Account', emailBody);
         try {            
             await newUser.save();
-            return res.status(200).send(`new user created successfully: ${newUser.firstName}`);
+            return res.status(200).send(`new user created successfully: ${newUser.username}`);
         } catch (error) {
             console.log(error);
             return res.status(500).send("Internal Server Error: Unable to create user");
@@ -120,7 +120,18 @@ const verifyUser = async (req: Request, res: Response) => {
         user.isTokenUsed = true;
         user.token = generateToken();
         await user.save();
-        return res.status(200).send('Email Verified Successfully');
+        const htmlBody = `
+            <html>
+                <head>
+                    <title>Email Verified Successfully</title>
+                </head>
+                <body>
+                    <h2 style="margin-bottom: 10px">Email Verified Successfully</h2>
+                    <a href="http://192.168.1.202:5173/">Login to continue</a>
+                </body>
+            </html>
+        `;
+        return res.status(200).send(htmlBody);
     } catch (error) {
         console.log(error);
         return res.status(500).send('Internal Server Error');
