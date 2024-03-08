@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import User from "../models/User.js";
 import { validationResult } from 'express-validator';
 import { compare, hash } from 'bcrypt';
-import sendEmail from "../utils/mailer.js";
 import { randomBytes } from 'crypto';
 
 interface IRequest {
@@ -17,56 +16,6 @@ interface IRequest {
 
 const generateToken = () => {
     return randomBytes(24).toString('hex');
-}
-
-enum Role { ADMIN, USER }
-
-const registerUser =  async (req: Request<{}, {}, IRequest>, res: Response) => {
-    const { firstName, lastName, email, username, password, address } = req.body;
-    
-    if (address) {
-        return res.status(403).send('Access denied: Bot detection triggered.');
-    }
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const errorOne = errors.array()[0].msg;
-        return res.status(409).send(errorOne);
-    }
-    try {
-        const emailCheck = await User.findOne({email});
-        if (emailCheck) {
-            return res.status(409).send('Email already exists');
-        }
-        const usernameCheck = await User.findOne({username});
-        if (usernameCheck) {
-            return res.status(409).send('Username already exists');
-        }
-        const token = generateToken();
-        const hashedPassword = await hash(password, 12);
-        const newUser = new User({
-            firstName,
-            lastName,
-            username,
-            email,
-            token,
-            password: hashedPassword
-        });      
-        const emailBody = `
-            <p>Please verify your email address. If you haven't signed up for this service, you can safely ignore this email.</p>
-            <a href="http://192.168.1.202:4000/auth/verify?token=${token}">Verify</a>
-        `
-        sendEmail(email, 'Verify Your Account', emailBody);
-        try {            
-            await newUser.save();
-            return res.status(200).send(`new user created successfully: ${newUser.username}`);
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send("Internal Server Error: Unable to create user");
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send('Internal Server Error');
-    }
 }
 
 const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
@@ -138,4 +87,4 @@ const verifyUser = async (req: Request, res: Response) => {
     }
 }
 
-export { registerUser, loginUser, verifyUser }
+export { loginUser, verifyUser }
