@@ -14,10 +14,6 @@ interface IRequest {
     address: string,
 }
 
-const generateToken = () => {
-    return randomBytes(24).toString('hex');
-}
-
 const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
     const { username, password, address } = req.body;
     
@@ -39,9 +35,6 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
         if (!matchPassword) {
             return res.status(401).send('Invalid username or password');
         }
-        if (findUser.verified === false) {
-            res.status(301).redirect('/verify');
-        }
         req.session.user = findUser.username;
         req.session.role = findUser.role;
         req.session.uid = findUser._id;
@@ -52,39 +45,4 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
     }
 }
 
-const verifyUser = async (req: Request, res: Response) => {
-    const { token } = req.query;
-    try {
-        if (!token) {
-            return res.status(400).send('Invalid or Expired Token');
-        }
-        const user = await User.findOne({
-            token,
-            isTokenUsed: false,
-        });
-        if (!user) {
-            return res.status(404).send('User not found. The provided Token may be invalid or expired.')
-        }
-        user.verified = true;
-        user.isTokenUsed = true;
-        user.token = generateToken();
-        await user.save();
-        const htmlBody = `
-            <html>
-                <head>
-                    <title>Email Verified Successfully</title>
-                </head>
-                <body>
-                    <h2 style="margin-bottom: 10px">Email Verified Successfully</h2>
-                    <a href="http://192.168.1.202:5173/">Login to continue</a>
-                </body>
-            </html>
-        `;
-        return res.status(200).send(htmlBody);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send('Internal Server Error');
-    }
-}
-
-export { loginUser, verifyUser }
+export { loginUser }
