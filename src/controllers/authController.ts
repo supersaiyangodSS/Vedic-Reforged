@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import User from "../models/User.js";
 import { validationResult } from 'express-validator';
 import { compare, hash } from 'bcrypt';
-import { randomBytes } from 'crypto';
 
 interface IRequest {
     firstName: string,
