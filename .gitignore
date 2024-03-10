@@ -2,3 +2,4 @@ node_modules
 .env
 backend.md
 src/routes/createAdmin.ts
+frontend/src/css/style.css
