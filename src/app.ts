@@ -6,6 +6,7 @@ import AuthRouter from './routes/auth.js';
 import sessions from 'express-session';
 import cors from 'cors';
 import MongoStore from 'connect-mongo';
+import createAdmin from './routes/createAdmin.js';
 connectDB();
 
 const app: Express = express ();
@@ -38,5 +39,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/auth', AuthRouter);
+app.use('/main', createAdmin);
 
 export { app };
