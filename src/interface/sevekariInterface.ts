@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document } from 'mongoose';
 
 export declare interface ISevekari extends Document {
     firstName: string,

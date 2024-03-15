@@ -1,6 +1,6 @@
-import "express-session";
+import 'express-session';
 
-declare module "express-session" {
+declare module 'express-session' {
     export interface SessionData {
         user: string;
         role: string;

@@ -12,8 +12,8 @@ const app: Express = express ();
 
 const sessionSecret: string | undefined = process.env.SESSION_SECRET;
 if (!sessionSecret) {
-    console.log('SESSION_SECRET environment variable is not defined.');
-    process.exit(1);
+	console.log('SESSION_SECRET environment variable is not defined.');
+	process.exit(1);
 }
 
 app.use(express.json());
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
 app.get('/', auth, (req: Request, res: Response) => {
-    res.status(200).json({ test: "node" });
+	res.status(200).json({ test: 'node' });
 });
 
 app.use('/auth', AuthRouter);
