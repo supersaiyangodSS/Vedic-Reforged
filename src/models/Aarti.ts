@@ -68,7 +68,7 @@ const AartiSchema = new Schema<IAarti>({
 	}
 });
 
-const Aarti = model('Aarti', AartiSchema);
+const Aarti = model<IAarti>('Aarti', AartiSchema);
 
 export default Aarti;
 
