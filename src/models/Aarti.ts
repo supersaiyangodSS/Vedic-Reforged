@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { IAarti } from '../interface/AartiInterface.js';
+import { IAarti } from '../interface/aartiInterface.js';
 
 const AartiSchema = new Schema<IAarti>({
 	aartiTime: {
