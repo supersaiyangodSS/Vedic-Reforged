@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
-app.get('/', (req: Request, res: Response) => {
+app.get('/', auth, (req: Request, res: Response) => {
 	res.status(200).render('index');
 });
 

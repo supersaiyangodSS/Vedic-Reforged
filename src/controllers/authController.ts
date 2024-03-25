@@ -54,4 +54,8 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
   }
 };
 
-export { loginUser };
+const loginPage = (req: Request, res: Response) => {
+  res.status(200).render('login', { title: 'Shri Swami Samarth' });
+}
+
+export { loginUser, loginPage };
