@@ -3,3 +3,4 @@ node_modules
 backend.md
 src/routes/createAdmin.ts
 frontend/src/css/style.css
+public/css/style.css
