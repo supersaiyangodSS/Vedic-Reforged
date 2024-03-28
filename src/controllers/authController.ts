@@ -1,8 +1,14 @@
+import { config } from "dotenv";
 import { Request, Response } from "express";
 import User from "../models/User.js";
 import { validationResult } from "express-validator";
 import { compare, hash } from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sessionSecret } from "../app.js";
+config();
+
+// const sessionSecret: string | undefined = process.env.SESSION_SECRET;
+
 
 interface IRequest {
   firstName: string;
@@ -35,14 +41,22 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
     if (!matchPassword) {
       return res.status(401).send({ message: "Invalid username or password" });
     }
+    if (!sessionSecret) {
+      return res.status(500).json({ error: 'no session secret found!' })
+    }
+    const oneDay = 60 * 60 * 24 * 1000;
     const token = jwt.sign(
       {
         userId: findUser._id,
         userEmail: findUser.username,
       },
-      "RANDOM-TOKEN",
+      sessionSecret,
       { expiresIn: "24h" }
     );
+    res.cookie('token', token, {
+      httpOnly: true,
+      maxAge: oneDay
+    })
     return res.status(200).send({
       message: "Login Successfull",
       username: findUser.username,
