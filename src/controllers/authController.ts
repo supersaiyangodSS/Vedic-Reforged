@@ -7,9 +7,6 @@ import jwt from "jsonwebtoken";
 import { sessionSecret } from "../app.js";
 config();
 
-// const sessionSecret: string | undefined = process.env.SESSION_SECRET;
-
-
 interface IRequest {
   firstName: string;
   lastName: string;
@@ -21,28 +18,36 @@ interface IRequest {
 
 const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
   const { username, password, address } = req.body;
-
+  const fields = { username, password };
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorOne = errors.array()[0].msg;
     return res.status(409).send(errorOne);
   }
   if (address) {
+    req.flash('message', 'Access Denied From Backend!');
     return res
-      .status(403)
-      .json({ message: "Access denied: Bot detection triggered." });
+      .status(301)
+      .redirect('/auth/login')
   }
   try {
     const findUser = await User.findOne({ username });
     if (!findUser) {
-      return res.status(401).send({ message: "Invalid username or password" });
+      req.flash('message', 'Invalid Username or Password')
+      req.flash('username', username);
+      req.flash('password', password);
+      return res.status(301)
+      .redirect('/auth/login')
     }
     const matchPassword = await compare(password, findUser.password);
     if (!matchPassword) {
-      return res.status(401).send({ message: "Invalid username or password" });
+      req.flash('message', 'Invalid Username or Password')
+      return res.status(301)
+      .redirect('/auth/login')
     }
     if (!sessionSecret) {
-      return res.status(500).json({ error: 'no session secret found!' })
+      console.log('session secret env not found!');      
+      process.exit(1);
     }
     const oneDay = 60 * 60 * 24 * 1000;
     const token = jwt.sign(
@@ -69,7 +74,7 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
 };
 
 const loginPage = (req: Request, res: Response) => {
-  res.status(200).render('login', { title: 'Shri Swami Samarth' });
+  res.status(200).render('login', { title: 'Shri Swami Samarth', message: req.flash('message'), username: req.flash('username'), password: req.flash('password') });
 }
 
 export { loginUser, loginPage };
