@@ -73,8 +73,16 @@ const loginUser = async (req: Request<{}, {}, IRequest>, res: Response) => {
   }
 };
 
-const loginPage = (req: Request, res: Response) => {
-  res.status(200).render('login', { title: 'Shri Swami Samarth', message: req.flash('message'), username: req.flash('username'), password: req.flash('password') });
+const loginPage = (req: Request, res: Response) => {  
+  try {
+    if(req.cookies?.token) {
+      return res.status(301).redirect('/dashboard');
+    }
+    res.status(200).render('login', { title: 'Shri Swami Samarth', message: req.flash('message'), username: req.flash('username'), password: req.flash('password') });
+  } catch (error) {
+    console.error('Error rendering login page', error);
+    res.status(500).render('500');
+  }
 }
 
 export { loginUser, loginPage };
