@@ -4,9 +4,11 @@ import express, { Request, Response, Express, NextFunction } from 'express';
 import connectDB from './config/database.js';
 import AuthRouter from './routes/auth.js';
 import cors from 'cors';
-import createAdmin from './routes/createAdmin.js';
-import jwt, { JwtPayload, verify } from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import dashboardRouter from '../src/routes/dashboard.js'
+import flash from 'connect-flash';
+import session, { SessionOptions } from 'express-session';
 connectDB();
 
 interface CustomRequest extends Request {
@@ -14,11 +16,22 @@ interface CustomRequest extends Request {
 }
 
 const app: Express = express ();
+const expressSession: string | undefined = process.env.EXPRESS_SESSION_SECRET;
+if (!expressSession) {
+	console.log('EXPRESS_SESSION_SECRET environment variable is not defined.');
+	process.exit(1);
+}
 
 const sessionSecret: string | undefined = process.env.SESSION_SECRET;
 if (!sessionSecret) {
 	console.log('SESSION_SECRET environment variable is not defined.');
 	process.exit(1);
+}
+
+const options: SessionOptions = {
+	secret: expressSession,
+	resave: false,
+	saveUninitialized: true
 }
 
 app.set('views', './views');
@@ -28,6 +41,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 app.use(cors());
 app.use(express.static('public'));
+app.use(session(options))
+app.use(flash())
 
 const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
 	const token = req.cookies?.token;
@@ -46,6 +61,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/auth', AuthRouter);
-app.use('/main', createAdmin); // ! REMOVE
+app.use('/dashboard', verifyToken, dashboardRouter);
 
 export { app, sessionSecret };
