@@ -18,9 +18,9 @@ function submitForm (e) {
     const passwordDom = document.querySelector('#password').value;
     let isValid = true;
     e.preventDefault();
-    // if (addressHP.value.length > 0) {
-    //     return promptModal('Access Denied!');
-    // }
+    if (addressHP.value.length > 0) {
+        return promptModal('Access Denied!');
+    }
     if (usernameDom.trim() === '') {
         isValid = false;
         return promptModal('invalid username');
